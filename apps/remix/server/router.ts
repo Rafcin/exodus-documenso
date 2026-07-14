@@ -148,7 +148,9 @@ if (env('NODE_ENV') !== 'development') {
 }
 
 // Start license client to verify license on startup.
-void LicenseClient.start();
+if (env('NEXT_PRIVATE_DOCUMENSO_LICENSE_KEY')) {
+  void LicenseClient.start();
+}
 
 // Start cron scheduler for background jobs (e.g. envelope expiration sweep).
 // No-op for Inngest provider which handles cron externally.
