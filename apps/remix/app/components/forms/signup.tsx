@@ -1,6 +1,7 @@
 import communityCardsImage from '@documenso/assets/images/community-cards.png';
 import { authClient } from '@documenso/auth/client';
 import { useAnalytics } from '@documenso/lib/client-only/hooks/use-analytics';
+import { useIsMounted } from '@documenso/lib/client-only/hooks/use-is-mounted';
 import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
 import { ZNameSchema } from '@documenso/lib/types/name';
 import { env } from '@documenso/lib/utils/env';
@@ -78,6 +79,7 @@ export const SignUpForm = ({
 }: SignUpFormProps) => {
   const { _ } = useLingui();
   const { toast } = useToast();
+  const isMounted = useIsMounted();
 
   const analytics = useAnalytics();
   const navigate = useNavigate();
@@ -251,7 +253,7 @@ export const SignUpForm = ({
 
         <Form {...form}>
           <form className="flex w-full flex-1 flex-col gap-y-4" onSubmit={form.handleSubmit(onFormSubmit)}>
-            <fieldset className="flex w-full flex-col gap-y-4" disabled={isSubmitting}>
+            <fieldset className="flex w-full flex-col gap-y-4" disabled={!isMounted || isSubmitting}>
               {isEmailPasswordSignupEnabled && (
                 <>
                   <FormField
@@ -401,7 +403,13 @@ export const SignUpForm = ({
             </fieldset>
 
             {isEmailPasswordSignupEnabled && (
-              <Button loading={form.formState.isSubmitting} type="submit" size="lg" className="mt-6 w-full">
+              <Button
+                loading={form.formState.isSubmitting}
+                type="submit"
+                size="lg"
+                className="mt-6 w-full"
+                disabled={!isMounted || isSubmitting}
+              >
                 <Trans>Create account</Trans>
               </Button>
             )}
