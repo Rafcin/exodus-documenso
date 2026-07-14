@@ -1,7 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 
-import server from '../../../server/router';
-
 /**
  * Keep the full Hono API server in a dedicated Vercel function bundle. Without
  * a route-specific function config, the Vercel React Router preset groups this
@@ -13,6 +11,20 @@ export const config = {
   maxDuration: 300,
 };
 
+async function handleApiRequest(request: Request) {
+  const { pathname } = new URL(request.url);
+
+  if (pathname === '/api/auth' || pathname.startsWith('/api/auth/')) {
+    const { default: authServer } = await import('../../../server/auth-router');
+
+    return authServer.fetch(request);
+  }
+
+  const { default: server } = await import('../../../server/router');
+
+  return server.fetch(request);
+}
+
 /**
  * Vercel's React Router adapter owns the server entry point, so requests for
  * the Hono APIs need to be forwarded explicitly. More-specific React Router
@@ -20,9 +32,9 @@ export const config = {
  * catch-all route.
  */
 export function loader({ request }: LoaderFunctionArgs) {
-  return server.fetch(request);
+  return handleApiRequest(request);
 }
 
 export function action({ request }: ActionFunctionArgs) {
-  return server.fetch(request);
+  return handleApiRequest(request);
 }
