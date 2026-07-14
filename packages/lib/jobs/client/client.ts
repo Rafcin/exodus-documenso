@@ -8,25 +8,35 @@ import { InngestJobProvider } from './inngest';
 import { LocalJobProvider } from './local';
 
 export class JobClient<T extends ReadonlyArray<JobDefinition> = []> {
-  private _provider: JobClientProvider;
+  private _provider: JobClientProvider | null = null;
 
-  public constructor(definitions: T) {
-    this._provider = match(env('NEXT_PRIVATE_JOBS_PROVIDER'))
+  public constructor(private readonly definitions: T) {}
+
+  private getProvider() {
+    if (this._provider) {
+      return this._provider;
+    }
+
+    const provider = match(env('NEXT_PRIVATE_JOBS_PROVIDER'))
       .with('inngest', () => InngestJobProvider.getInstance())
       .with('bullmq', () => BullMQJobProvider.getInstance())
       .otherwise(() => LocalJobProvider.getInstance());
 
-    definitions.forEach((definition) => {
-      this._provider.defineJob(definition);
+    this.definitions.forEach((definition) => {
+      provider.defineJob(definition);
     });
+
+    this._provider = provider;
+
+    return provider;
   }
 
-  public async triggerJob(options: TriggerJobOptions<T>) {
-    return this._provider.triggerJob(options);
+  public triggerJob(options: TriggerJobOptions<T>) {
+    return this.getProvider().triggerJob(options);
   }
 
   public getApiHandler() {
-    return this._provider.getApiHandler();
+    return this.getProvider().getApiHandler();
   }
 
   /**
@@ -37,6 +47,6 @@ export class JobClient<T extends ReadonlyArray<JobDefinition> = []> {
    * (e.g. Inngest).
    */
   public startCron() {
-    this._provider.startCron();
+    this.getProvider().startCron();
   }
 }
