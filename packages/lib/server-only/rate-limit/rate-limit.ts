@@ -71,10 +71,12 @@ export const createRateLimit = (config: RateLimitConfig) => {
       const count = params.count ?? 1;
 
       if (process.env.DANGEROUS_BYPASS_RATE_LIMITS === 'true') {
+        const limit = params.identifier ? config.max : ipLimit;
+
         return {
           isLimited: false,
-          remaining: ipLimit,
-          limit: ipLimit,
+          remaining: limit,
+          limit,
           reset,
         };
       }

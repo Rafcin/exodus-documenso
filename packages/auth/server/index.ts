@@ -57,7 +57,7 @@ auth.onError((err, c) => {
   if (err instanceof HTTPException) {
     return c.json(
       {
-        code: AppErrorCode.UNKNOWN_ERROR,
+        code: err.status === 429 ? AppErrorCode.TOO_MANY_REQUESTS : AppErrorCode.UNKNOWN_ERROR,
         message: err.message,
         statusCode: err.status,
       },

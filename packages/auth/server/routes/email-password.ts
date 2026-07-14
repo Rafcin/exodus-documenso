@@ -201,6 +201,7 @@ export const emailPasswordRoute = new Hono<HonoAuthContext>()
 
     const signupLimitResult = await signupRateLimit.check({
       ip: requestMetadata.ipAddress ?? 'unknown',
+      identifier: email.toLowerCase(),
     });
 
     const signupLimited = rateLimitResponse(c, signupLimitResult);

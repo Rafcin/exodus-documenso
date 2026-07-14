@@ -5,6 +5,7 @@ import { createRateLimit } from './rate-limit';
 export const signupRateLimit = createRateLimit({
   action: 'auth.signup',
   max: 3,
+  globalMax: 100,
   window: '3h',
 });
 

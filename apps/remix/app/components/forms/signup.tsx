@@ -52,6 +52,7 @@ export const SIGNUP_ERROR_MESSAGES: Record<string, MessageDescriptor> = {
   SIGNUP_DISPOSABLE_EMAIL: msg`Disposable email addresses are not allowed. Please sign up with a permanent email address.`,
   [AppErrorCode.ALREADY_EXISTS]: msg`We were unable to create your account. If you already have an account, try signing in instead.`,
   [AppErrorCode.INVALID_REQUEST]: msg`We were unable to create your account. Please review the information you provided and try again.`,
+  [AppErrorCode.TOO_MANY_REQUESTS]: msg`Too many signup attempts. Please wait and try again later.`,
 };
 
 export type TSignUpFormSchema = z.infer<typeof ZSignUpFormSchema>;
