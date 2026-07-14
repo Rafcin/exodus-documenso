@@ -9,3 +9,15 @@ test('[USER] signup page survives a concurrent cold-start burst', async ({ reque
 
   expect(responses.map((response) => response.status())).toEqual(Array.from({ length: 10 }, () => 200));
 });
+
+test('[USER] auth session endpoint survives a concurrent cold-start burst', async ({ request }) => {
+  const probe = Date.now();
+
+  const responses = await Promise.all(
+    Array.from({ length: 10 }, async (_, index) =>
+      request.get(`/api/auth/session-json?concurrencyProbe=${probe}-${index}`),
+    ),
+  );
+
+  expect(responses.map((response) => response.status())).toEqual(Array.from({ length: 10 }, () => 200));
+});
