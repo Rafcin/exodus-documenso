@@ -4,7 +4,7 @@ import { UserSecurityAuditLogType } from '@prisma/client';
 
 import { SALT_ROUNDS } from '../../constants/auth';
 import { AppError, AppErrorCode } from '../../errors/app-error';
-import { jobsClient } from '../../jobs/client';
+import { authJobsClient } from '../../jobs/auth-client';
 import type { RequestMetadata } from '../../universal/extract-request-metadata';
 
 export type ResetPasswordOptions = {
@@ -78,7 +78,7 @@ export const resetPassword = async ({ token, password, requestMetadata }: ResetP
     });
   });
 
-  await jobsClient.triggerJob({
+  await authJobsClient.triggerJob({
     name: 'send.password.reset.success.email',
     payload: {
       userId: foundToken.userId,

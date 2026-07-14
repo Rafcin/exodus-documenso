@@ -6,7 +6,7 @@ import {
 } from '@documenso/lib/constants/auth';
 import { EMAIL_VERIFICATION_STATE } from '@documenso/lib/constants/email';
 import { AppError } from '@documenso/lib/errors/app-error';
-import { jobsClient } from '@documenso/lib/jobs/client';
+import { authJobsClient } from '@documenso/lib/jobs/auth-client';
 import { disableTwoFactorAuthentication } from '@documenso/lib/server-only/2fa/disable-2fa';
 import { enableTwoFactorAuthentication } from '@documenso/lib/server-only/2fa/enable-2fa';
 import { isTwoFactorAuthenticationEnabled } from '@documenso/lib/server-only/2fa/is-2fa-availble';
@@ -166,7 +166,7 @@ export const emailPasswordRoute = new Hono<HonoAuthContext>()
         mostRecentToken.expires.valueOf() <= Date.now() ||
         DateTime.fromJSDate(mostRecentToken.createdAt).diffNow('minutes').minutes > -5
       ) {
-        await jobsClient.triggerJob({
+        await authJobsClient.triggerJob({
           name: 'send.signup.confirmation.email',
           payload: {
             email: user.email,
@@ -236,7 +236,7 @@ export const emailPasswordRoute = new Hono<HonoAuthContext>()
       throw err;
     });
 
-    await jobsClient.triggerJob({
+    await authJobsClient.triggerJob({
       name: 'send.signup.confirmation.email',
       payload: {
         email: user.email,
@@ -345,7 +345,7 @@ export const emailPasswordRoute = new Hono<HonoAuthContext>()
       });
     }
 
-    await jobsClient.triggerJob({
+    await authJobsClient.triggerJob({
       name: 'send.signup.confirmation.email',
       payload: {
         email,
