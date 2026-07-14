@@ -25,5 +25,7 @@ test('[USER] sees an accurate message when signup is rate limited', async ({ pag
   await signSignaturePad(page);
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
 
-  await expect(page.getByText('Too many signup attempts. Please wait and try again later.')).toBeVisible();
+  await expect(
+    page.getByText('Too many signup attempts. Please wait and try again later.', { exact: true }),
+  ).toBeVisible();
 });
