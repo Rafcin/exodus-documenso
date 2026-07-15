@@ -53,7 +53,7 @@ import { superLoaderJson, useSuperLoaderData } from '~/utils/super-json-loader';
 import type { Route } from './+types/_index';
 
 const handleV1Loader = async ({ params, request }: Route.LoaderArgs) => {
-  const { requestMetadata } = getOptionalLoaderContext();
+  const { requestMetadata } = getOptionalLoaderContext(request);
 
   const { user } = await getOptionalSession(request);
 
@@ -184,7 +184,7 @@ const handleV1Loader = async ({ params, request }: Route.LoaderArgs) => {
 const handleV2Loader = async ({ params, request }: Route.LoaderArgs) => {
   const { token } = params;
 
-  const { requestMetadata } = getOptionalLoaderContext();
+  const { requestMetadata } = getOptionalLoaderContext(request);
 
   const { user } = await getOptionalSession(request);
 

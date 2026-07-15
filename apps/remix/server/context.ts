@@ -6,21 +6,25 @@ export type AppContext = {
   requestMetadata: RequestMetadata;
 };
 
+export const createAppContext = (request: Request): AppContext => {
+  return {
+    requestMetadata: extractRequestMetadata(request),
+  };
+};
+
 /**
  * Apply a context which can be accessed throughout the app.
  *
  * Keep this as lean as possible in terms of awaiting, because anything
  * here will increase each page load time.
  */
-export const appContext = async (c: Context, next: Next) => {
+export const appContext = (c: Context, next: Next) => {
   const request = c.req.raw;
   const url = new URL(request.url);
 
   const noSessionCookie = extractSessionCookieFromHeaders(request.headers) === null;
 
-  setAppContext(c, {
-    requestMetadata: extractRequestMetadata(request),
-  });
+  setAppContext(c, createAppContext(request));
 
   // These are non page paths like API.
   if (!isPageRequest(request) || noSessionCookie || blacklistedPathsRegex.test(url.pathname)) {

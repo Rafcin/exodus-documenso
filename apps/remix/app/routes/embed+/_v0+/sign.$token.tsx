@@ -32,7 +32,7 @@ import { getOptionalLoaderContext } from '../../../../server/utils/get-loader-se
 import type { Route } from './+types/sign.$token';
 
 async function handleV1Loader({ params, request }: Route.LoaderArgs) {
-  const { requestMetadata } = getOptionalLoaderContext();
+  const { requestMetadata } = getOptionalLoaderContext(request);
 
   if (!params.token) {
     throw new Response('Not found', { status: 404 });
@@ -153,7 +153,7 @@ async function handleV1Loader({ params, request }: Route.LoaderArgs) {
 }
 
 async function handleV2Loader({ params, request }: Route.LoaderArgs) {
-  const { requestMetadata } = getOptionalLoaderContext();
+  const { requestMetadata } = getOptionalLoaderContext(request);
 
   if (!params.token) {
     throw new Response('Not found', { status: 404 });
